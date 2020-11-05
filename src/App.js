@@ -6,6 +6,7 @@ import Map from './Map';
 import Table from "./Table";
 import {sortData} from "./helper/util"
 import LineGraph from "./LineGraph"
+import "leaflet/dist/leaflet.css";
 
 function App() {
 
@@ -13,6 +14,9 @@ function App() {
   const [country, setCountry] = useState('worldwide');
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
+  const [mapCenter, setMapCenter] = useState({lat: 34.80746, lng: -40.4796});
+  const [mapZoom, setMapZoom ] = useState(3);
+  const [mapCountries, setMapCountries] = useState([]);
 
 
 // ------------------------------------------------
@@ -47,6 +51,7 @@ function App() {
           
           const sortedData = sortData(data);
           setTableData(sortedData);
+          setMapCountries(data);
           setCountries(countries);
       });
     };
@@ -57,7 +62,6 @@ function App() {
 
   const onCountryChange = async (event) => {
     const countryCode = event.target.value
-    setCountry(countryCode);
 
     const url = countryCode === 'worldwide' 
     ? "https://disease.sh/v3/covid-19/all"
@@ -67,6 +71,10 @@ function App() {
     .then(response => response.json())
     .then(data => {
         setCountryInfo(data);
+        setCountry(countryCode);
+
+        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        setMapZoom(4);
     })
 }
 
@@ -101,7 +109,11 @@ function App() {
             </div>
 
             {/* Map of each country */}
-            <Map />
+            <Map 
+                center={mapCenter}
+                zoom={mapZoom}
+                countries={mapCountries}
+            />
         </div>
 
         <Card className="app__right">

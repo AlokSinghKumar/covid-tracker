@@ -73,6 +73,7 @@ function LineGraph({ casesType = "cases"}) {
             .then(response => response.json())
             .then(data => {
                 const chartData = bulidChartData(data, casesType);
+                console.log(chartData);
                 setdata(chartData);
             });
         }
